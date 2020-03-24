@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:great_homies_chef/screens/profile.dart';
 import 'screens/account/signin.dart';
 import 'screens/homeScreen.dart';
 import 'services/auth.dart';
@@ -71,7 +72,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 }
 
 Future<void> mainNavigationPage() async {
-
   if (blIsSignedIn || kIsWeb) {
     if (userProfile.containsKey("Theme"))
       myAppTheme = userProfile["Theme"] == "Dark Theme"
@@ -82,6 +82,13 @@ Future<void> mainNavigationPage() async {
       _context,
       MaterialPageRoute(builder: (context) => HomeScreen()),
     );
+
+    if (userProfile.containsKey("restaurant name") == false) {
+      Navigator.push(
+        _context,
+        MaterialPageRoute(builder: (context) => ProfileScreen()),
+      );
+    }
   } else {
     Navigator.pushReplacement(
       _context,

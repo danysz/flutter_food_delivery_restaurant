@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:great_homies/screens/order_management/orders.dart';
-
+import 'package:great_homies_chef/screens/order_management/orders.dart';
 import '../main.dart';
 import '../screens/account/signin.dart';
 import '../screens/profile.dart';
@@ -135,32 +134,27 @@ getDrawer(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
               elevation: 6,
               child: InkWell(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  //Login ID
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "Orders",
+                      "Past Orders",
                       style: myAppTheme.textTheme.caption,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: Text(
-                      "Manage all past orders",
+                      "Fulfilled orders",
                       style: myAppTheme.textTheme.bodyText2,
                     ),
                   ),
                 ]),
                 onTap: () {
-                  if (blIsSignedIn) {
-                    //Open past orders screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OrdersScreen()),
-                    );
-                  } else {
-                    showSnackBar(scaffoldKey: scaffoldKey, text: "Please Log in first");
-                  }
+                  //Open past orders screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PastOrderScreen()),
+                  );
                 },
               ),
             ),
@@ -189,7 +183,7 @@ getDrawer(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            "Sign into great_homies",
+                            "Sign into great_homies_chef",
                             style: myAppTheme.textTheme.caption,
                           ),
                         ),
@@ -199,26 +193,6 @@ getDrawer(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
                               MaterialPageRoute(builder: (context) => SignInScreen()), (Route<dynamic> route) => false);
                         },
                       )),
-
-            //Made by
-            Card(
-              color: myAppTheme.cardColor,
-              margin: EdgeInsets.all(12),
-              shape: roundedShape(),
-              elevation: 6,
-              child: InkWell(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      "Made by\nMargin Patel and\nSharad Vinod",
-                      style: myAppTheme.textTheme.bodyText2,
-                    ),
-                  ),
-                ]),
-                onTap: () async {},
-              ),
-            ),
           ],
         ),
       ),

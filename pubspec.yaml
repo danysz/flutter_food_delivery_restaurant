@@ -1,5 +1,5 @@
-name: great_homies
-description: A food App made in Flutter
+name: great_homies_chef
+description: A food delivers admin App made in Flutter with Firebase at the backend
 version: 1.0.0+1
 
 environment:
@@ -18,7 +18,6 @@ dependencies:
   #TODO: Complete Permissions process for IOS
   file_picker: 1.4.3+1
   permission_handler: 4.0.0
-#  stepper_touch: 0.0.1
   flare_flutter: 2.0.1
   carousel_slider: 1.4.1
   flutter_rounded_progress_bar: 0.1.2

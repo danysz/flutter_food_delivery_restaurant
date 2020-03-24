@@ -42,6 +42,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468974510479:android:c6690301e9479947842bfa",
+        "android_client_info": {
+          "package_name": "com.greathomies.great_homies.chef"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468974510479-87i7pc6tm3ilnjhsm17uiig9eogklvgk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.greathomies.great_homies.chef",
+            "certificate_hash": "84b6f3376da7827be9347865765c94b762049631"
+          }
+        },
+        {
+          "client_id": "468974510479-bukdake0j56hif1es9r6j9ierrqbcfv3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ2-kV2mj_hJsGUVzYrDMhhSIL8fVFfCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468974510479-bukdake0j56hif1es9r6j9ierrqbcfv3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

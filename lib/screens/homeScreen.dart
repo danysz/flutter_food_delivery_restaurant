@@ -3,9 +3,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:great_homies/screens/chef.dart';
-import 'package:great_homies/screens/menu.dart';
-import 'package:great_homies/widgets/shapes.dart';
+import 'package:great_homies_chef/screens/order_management/order.dart';
 import '../main.dart';
 import '../services/auth.dart';
 import '../themes/maintheme.dart';
@@ -13,7 +11,6 @@ import '../widgets/appbar.dart';
 import '../widgets/drawer.dart';
 
 //==================This is the Homepage for the app==================
-String strAppBarTitle = "Restaurants in your area";
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,16 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   //Keys
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,50 +37,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: myAppTheme.scaffoldBackgroundColor,
-        appBar: getAppBar(
-            scaffoldKey: scaffoldKey, context: context, strAppBarTitle: strAppBarTitle, showBackButton: false),
+        appBar:
+            getAppBar(scaffoldKey: scaffoldKey, context: context, strAppBarTitle: "Your Orders", showBackButton: false),
 
         //drawer
         drawer: getDrawer(context, scaffoldKey),
 
         //Body
-        body: ListView(
-//          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            //Top Chefs of the week
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text("Top Chefs of the week", style: myAppTheme.textTheme.caption, textAlign: TextAlign.left,),
-            ),
-            Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.22,
-              child: getChefs(size),
-            ),
-
-            //Restaurants
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text("Restaurants", style: myAppTheme.textTheme.caption, textAlign: TextAlign.left,),
-            ),
-            Container(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.55,
-                child: getRestaurants(size))
-          ],
-        ),
+        body: getOrders(size),
       ),
     );
   }
@@ -113,10 +64,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   //
   //
   //
-
-  //Get Top Chefs of the week
-  getChefs(double size) {
-    return FutureBuilder(
+  //Get all the Orders done in this restaurant
+  getOrders(double size) {
+    return StreamBuilder(
+      stream: Firestore.instance
+          .collectionGroup("Orders")
+          .where("restaurant", isEqualTo: userRestaurant["name"])
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot == null || snapshot.data == null || snapshot.hasData == false) {
           return Center(
@@ -128,183 +82,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           );
         } else {
-          return ListView.builder(
-              padding: EdgeInsets.all(8),
-              scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                //Data
-                DocumentSnapshot _ds = snapshot.data[index];
-                return InkWell(
-                  child: Card(
-                    shape: roundedShape(),
-                    color: myAppTheme.cardColor,
-                    margin: EdgeInsets.all(2),
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          //Image
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                                height: 90,
-                                width: 90,
-                                child: Hero(
-                                  tag: _ds.data["photo"] ?? _ds.data["name"],
-                                  child: CircleAvatar(
-                                    backgroundImage: Image.network(
-                                      _ds.data["photo"] ??
-                                          "https://cdn2.iconfinder.com/data/icons/food-restaurant-1/128/flat-11-512.png",
-                                      fit: BoxFit.cover,
-                                    ).image,
-                                  ),
-                                )),
-                          ),
-
-                          //Name
-                          Hero(
-                            tag: _ds.data["name"] ?? "",
-                            child: Text(
-                              _ds.data["name"] ?? "",
-                              style: myAppTheme.textTheme.caption,
-                            ),
-                          ),
-
-                          //Rating
-                          Text(_ds.data["rating"].toString() + " ⭐" ?? "-",
-                              style: myAppTheme.textTheme.bodyText1),
-                        ],
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChefScreen(_ds.data)),
-                    );
-                  },
-                );
-              });
-        }
-      },
-      future: getChefContent(),
-    );
-  }
-
-  Future<List> getChefContent() async {
-    QuerySnapshot _qs = await Firestore.instance.collection("Chef").getDocuments();
-    return _qs.documents;
-  }
-
-  //Get all the restaurants
-  getRestaurants(double size) {
-    return FutureBuilder(
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot == null || snapshot.data == null || snapshot.hasData == false) {
-          return Center(
-            child: Container(
-              width: 300,
-              height: 300,
-              child: FlareActor("assets/animations/pizza-loading.flr",
-                  isPaused: false, alignment: Alignment.center, fit: BoxFit.contain, animation: "animate"),
-            ),
-          );
-        } else {
+          QuerySnapshot _qs = snapshot.data;
           return ListView.builder(
               padding: EdgeInsets.all(8),
               scrollDirection: MediaQuery.of(context).size.height > MediaQuery.of(context).size.width
                   ? Axis.vertical
                   : Axis.horizontal,
-              itemCount: snapshot.data.length,
+              itemCount: _qs.documents.length,
               itemBuilder: (context, index) {
                 //Data
-                DocumentSnapshot _ds = snapshot.data[index];
+                DateTime stOrder = DateTime.parse(_qs.documents[index].data["timestamp"].toString());
 
-                List lstPhotos = new List();
-                if (_ds.data.containsKey("Photos")) lstPhotos = _ds.data["Photos"];
-
-                return InkWell(
-                  child: Card(
-                    shape: roundedShape(),
-                    color: myAppTheme.cardColor,
-                    margin: EdgeInsets.all(2),
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          //Image
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Hero(
-                              tag: lstPhotos.length > 0
-                                  ? lstPhotos[0] ?? _ds.data["name"]
-                                  : _ds.data["name"],
-                              child: Container(
-                                width: size * 0.35,
-                                height: 90,
-                                child: Image.network(
-                                  lstPhotos.length > 0
-                                      ? lstPhotos[0] ?? ""
-                                      : "https://cdn2.iconfinder.com/data/icons/food-restaurant-1/128/flat-11-512.png",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Container(
-                            width: size * 0.5,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                //Food Place Name
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    _ds.data["name"] ?? "",
-                                    style: myAppTheme.textTheme.caption,
-                                  ),
-                                ),
-
-                                //Address
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                                  child: Text(_ds.data["address"] ?? "", style: myAppTheme.textTheme.bodyText2),
-                                ),
-
-                                //Rating
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                                  child: Text("Ratings: " + _ds.data["rating"].toString() ?? "-" + " stars",
-                                      style: myAppTheme.textTheme.bodyText2),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return ListTile(
+                  title: Text("Order from: " + _qs.documents[index].data["address"]),
+                  subtitle: Text("Ordered on: " + stOrder.hour.toString() + ":" + stOrder.minute.toString() + ", " +
+                      stOrder.day.toString() + "/" + stOrder.month.toString() + "/" +
+                      stOrder.year.toString()),
+                  trailing: Text("₹" + _qs.documents[index].data["total"].toString()),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MenuScreen(_ds.data)),
+                      MaterialPageRoute(builder: (context) => OrderScreen(_qs.documents[index].data)),
                     );
                   },
                 );
               });
         }
       },
-      future: getRestaurantContent(),
     );
-  }
-
-  Future<List> getRestaurantContent() async {
-    QuerySnapshot _qs = await Firestore.instance.collection("Restaurants").getDocuments();
-    return _qs.documents;
   }
 }

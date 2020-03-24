@@ -1,4 +1,4 @@
-package com.greathomies.great_homies
+package com.greathomies.great_homies.chef
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:great_homies_chef/screens/profile.dart';
 
 import '../../main.dart';
 import '../../widgets/buttons.dart';
@@ -77,7 +78,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                         child: SlideTransition(
                           position: _animOffset,
                           child: Text(
-                              "Let us get started by signing into great_homies with Google.\n\nOnce you are logged in, your prefrences will get saved, and you will be able to create your custom breathing patterns!",
+                              "Let us get started by signing into Great Homies with Google.\n\nOnce you are logged in, your prefrences will get saved, and you will be able to create your custom breathing patterns!",
                               style: myAppTheme.textTheme.caption.copyWith(fontWeight: FontWeight.normal),
                               textAlign: TextAlign.left),
                         ),
@@ -133,6 +134,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+            //Send the user to the profile screen to fill their Data
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileScreen()),
             );
           }
         });

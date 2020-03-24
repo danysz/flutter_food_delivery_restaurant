@@ -1,6 +1,6 @@
 {
-    "name": "great_homies",
-    "short_name": "great_homies",
+    "name": "great_homies_chef",
+    "short_name": "great_homies_chef",
     "start_url": ".",
     "display": "minimal-ui",
     "background_color": "#0175C2",

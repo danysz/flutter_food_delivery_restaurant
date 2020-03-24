@@ -7,6 +7,7 @@ import '../main.dart';
 
 MobFirebaseAuth.FirebaseUser firebaseUser;
 Map<String, dynamic> userProfile = {};
+Map<String, dynamic> userRestaurant = {};
 
 //This is the main Firebase auth object
 MobFirebaseAuth.FirebaseAuth mobAuth = MobFirebaseAuth.FirebaseAuth.instance;
@@ -83,9 +84,10 @@ class AuthService {
   Future<bool> getData() async {
     bool blReturn;
 
-    dbFirestore.collection("Users").document(firebaseUser.email).snapshots().listen((snapshot) {
+    dbFirestore.collection("Users").document(firebaseUser.email).snapshots().listen((snapshot) async {
       if (snapshot.data != null) {
         userProfile = snapshot.data;
+        await getRestaurantData();
         print(userProfile);
         blReturn = true;
       } else {
@@ -105,6 +107,39 @@ class AuthService {
         .collection("Users")
         .document(firebaseUser.email)
         .setData(userProfile, merge: true)
+        .then((onValue) async {
+      blReturn = true;
+    });
+    return blReturn;
+  }
+
+
+  //Gets the userData
+  Future<bool> getRestaurantData() async {
+    bool blReturn;
+
+    dbFirestore.collection("Restaurants").document(userProfile["restaurant name"]).snapshots().listen((snapshot) {
+      if (snapshot.data != null) {
+        userRestaurant = snapshot.data;
+        print(userRestaurant);
+        blReturn = true;
+      } else {
+        blReturn = false;
+      }
+    });
+
+    while (blReturn == null) await Future.delayed(Duration(seconds: 1));
+    return blReturn;
+  }
+
+  //Update the data into the database
+  Future<bool> setRestaurantData() async {
+    bool blReturn = false;
+    //For mobile
+    await dbFirestore
+        .collection("Restaurants")
+        .document(userProfile["restaurant name"])
+        .setData(userRestaurant, merge: true)
         .then((onValue) async {
       blReturn = true;
     });
